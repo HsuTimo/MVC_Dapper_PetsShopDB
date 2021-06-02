@@ -12,13 +12,18 @@ namespace DAL.Models
 {
     public class ProductDataAccess : IProductDataAccess
     {
+        private IHelper _helper;
+        public ProductDataAccess(IHelper helper)
+        {
+            _helper = helper;
+        }
         public void AddProduct(Product product)
         {
             DynamicParameters param = new DynamicParameters();
             param.Add("@ProductName", product.ProductName);
             param.Add("@Quantity", product.Quantity);
             param.Add("@Price", product.Price);
-            using (IDbConnection connection = new SqlConnection(Helper.Constr("PetShopInventory")))
+            using (IDbConnection connection = new SqlConnection(_helper.Constr("PetShopInventory")))
             {
                 connection.Execute("AddProduct", param, commandType: CommandType.StoredProcedure);
             }
@@ -28,7 +33,7 @@ namespace DAL.Models
         {
             DynamicParameters param = new DynamicParameters();
             param.Add("@ID", id);
-            using (IDbConnection connection = new SqlConnection(Helper.Constr("PetShopInventory")))
+            using (IDbConnection connection = new SqlConnection(_helper.Constr("PetShopInventory")))
             {
                 connection.Execute("DeleteProduct", param, commandType: CommandType.StoredProcedure);
             }
@@ -36,7 +41,7 @@ namespace DAL.Models
 
         public List<Product> GetProducts()
         {
-            using (IDbConnection connection = new SqlConnection(Helper.Constr("PetShopInventory")))
+            using (IDbConnection connection = new SqlConnection(_helper.Constr("PetShopInventory")))
             {
                 var sql = $"select * from PetShopInventory";
                 var output = connection.Query<Product>(sql);
@@ -45,7 +50,7 @@ namespace DAL.Models
         }
         public Product GetProduct(int id)
         {
-            using (IDbConnection connection = new SqlConnection(Helper.Constr("PetShopInventory")))
+            using (IDbConnection connection = new SqlConnection(_helper.Constr("PetShopInventory")))
             {
                 var sql = $"select * from PetShopInventory where ID = {id}";
                 var output = connection.Query<Product>(sql).ToList().First();
@@ -60,7 +65,7 @@ namespace DAL.Models
             param.Add("@ProductName", product.ProductName);
             param.Add("@Quantity", product.Quantity);
             param.Add("@Price", product.Price);
-            using (IDbConnection connection = new SqlConnection(Helper.Constr("PetShopInventory")))
+            using (IDbConnection connection = new SqlConnection(_helper.Constr("PetShopInventory")))
             {
                 connection.Execute("UpdateProduct", param, commandType: CommandType.StoredProcedure);
             }

@@ -1,20 +1,22 @@
-﻿using BLL.Models;
-using BOL.Interfaces;
-using DAL.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using BOL.Models;
+using MVCPetsShop.Interfaces;
+using MVCPetsShop.Models;
 
 namespace MVCPetsShop.Controllers
 {
     public class PetShopController : Controller
     {
-        private IProductDataAccess _repo = new ProductRepository(new ProductDataAccess());
-        public IConfiguration configuration;
+        //private IProductDataAccess _repo = new ProductRepository(new ProductDataAccess());
+        private readonly IPetShopProductRepo _repo;
+        public PetShopController(IPetShopProductRepo repo)
+        {
+            _repo = repo;
+        }
         public IActionResult Inventory()
         {
             var products = _repo.GetProducts();
@@ -27,7 +29,7 @@ namespace MVCPetsShop.Controllers
             return View(product);
         }
         [HttpPost]
-        public IActionResult Edit(Product product)
+        public IActionResult Edit(PetShopProduct product)
         {
             _repo.UpdateProduct(product);
             return View("Inventory",_repo.GetProducts());
